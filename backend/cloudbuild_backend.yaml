@@ -1,0 +1,41 @@
+steps:
+- name: hashicorp/terraform:light
+  id: 'Terraform Init'
+  entrypoint: /bin/sh
+  args:
+    - -c
+    - |
+      cd $_TERRAFORM_DIR
+      terraform init
+
+- name: hashicorp/terraform:light
+  id: 'Terraform Plan'
+  entrypoint: /bin/sh
+  args:
+    - -c
+    - |
+      cd $_TERRAFORM_DIR
+      terraform plan -out=tfplan
+
+- name: hashicorp/terraform:light
+  id: 'Terraform Apply'
+  entrypoint: /bin/sh
+  args:
+    - -c
+    - |
+      cd $_TERRAFORM_DIR
+      terraform apply -auto-approve tfplan
+
+artifacts:
+  objects:
+    location: gs://YOUR_GCS_BUCKET_NAME/terraform-plans/
+    paths:
+      - $_TERRAFORM_DIR/tfplan
+
+timeout: "1200s"
+
+substitutions:
+  _TERRAFORM_DIR: "backend"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
