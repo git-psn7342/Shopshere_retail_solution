@@ -1,5 +1,10 @@
-runtime: python39
-entrypoint: gunicorn -b :$PORT app:app
+runtime: python39  # Or any runtime that supports static files, python39 is common
 
-env_variables:
-  GOOGLE_CLOUD_PROJECT: psychic-empire-453222-i1
+handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+
+- url: /(.*)
+  static_files: \1
+  upload: (.*)
